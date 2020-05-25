@@ -1,0 +1,9 @@
+shot_image = "./Shuriken.png"
+
+ShotData {
+	id = 1
+	rect = (0, 0, 16, 16)
+	render = ALPHA
+	alpha = 255
+	collision = 16
+}
