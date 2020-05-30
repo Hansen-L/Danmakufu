@@ -1,0 +1,70 @@
+task CreateStageEnemy1(x, y, speedE, angleE) {
+    let count = 0; //Counter
+    let Xmin = -32;
+    let Xmax = GetStgFrameWidth + 32;
+    let Ymin = -32; 
+    let Ymax = GetStgFrameHeight + 32;
+    let objEnemy;
+    let enemyX;
+    let enemyY;
+
+    let imgEnemy = GetCurrentScriptDirectory() ~ "Robotcat.png";
+
+
+    TInitialize; // Make the enemy
+
+    task TInitialize {
+        objEnemy = ObjEnemy_Create(OBJ_ENEMY);
+        ObjEnemy_Regist(objEnemy);
+        ObjEnemy_SetLife(objEnemy, 200);
+
+        ObjMove_SetPosition(objEnemy, x, y);
+        ObjMove_SetAngle(objEnemy, angleE);
+        ObjMove_SetSpeed(objEnemy, speedE);
+
+        TMainLoop;
+        TFinalize;
+    }
+    task TMainLoop {
+        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
+            renderEnemy;
+
+            enemyX = ObjMove_GetX(objEnemy);
+            enemyY = ObjMove_GetX(objEnemy);
+
+            ObjEnemy_SetIntersectionCircleToShot(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 32); 
+            ObjEnemy_SetIntersectionCircleToPlayer(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 8);
+            if (count == 30) {bulletA;}
+            count++;
+            yield;
+        }
+    }
+
+    function wait(w){ loop(w) { yield; } }
+
+    task renderEnemy{
+        ObjPrim_SetTexture(objEnemy, imgEnemy);
+        ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
+        ObjSprite2D_SetDestCenter(objEnemy);  // This center no longer needs to be set for each new sprite?
+        ObjRender_SetScaleXYZ(objEnemy, 1, 1, 0);
+
+        while ( !Obj_IsDeleted(objEnemy) ){
+            ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
+
+            yield;
+        }
+
+    }
+
+    task bulletA{
+        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
+            CreateShotA1(enemyX, enemyY, 5, 90, 105, 0);
+
+            wait(5);
+        }
+    }
+    task TFinalize {
+        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {yield;}
+        Obj_Delete(objEnemy);
+    }
+}

@@ -1,9 +1,9 @@
 #TouhouDanmakufu[Player]
 #ScriptVersion[3]
-#ID["Adventurer"]
-#Title["Adventurer"]
-#Text["Adventurer"]
-#ReplayName["Adventurer"]
+#ID["Daisy"]
+#Title["Daisy"]
+#Text["Daisy"]
+#ReplayName["Daisy"]
 
 let CSD = GetCurrentScriptDirectory();
 let playerID = GetPlayerObjectID();

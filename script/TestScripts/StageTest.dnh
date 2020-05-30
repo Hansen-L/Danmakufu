@@ -1,0 +1,42 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Stage Test"]
+#Text["Stage Test"]
+#System["script/MyGame/system/Default_System.dnh"] 
+
+//#Image["./ExRumia(星符「ミッドナイトレヴァリエ」).jpg"]
+//#Background["script/default_system/Default_Background_IceMountain.txt"]
+
+#include "./StageEnemy1.dnh"
+
+@Initialize
+{
+    TStage();
+}
+@MainLoop
+{
+    yield;
+}
+@Finalize
+{
+}
+
+task TStage
+{
+    let dir = GetCurrentScriptDirectory();
+
+    let path = dir ~ "PluralTest.dnh";
+    let idScript = LoadScriptInThread(path);
+    loop(60){yield;}
+    StartScript(idScript);
+    CreateStageEnemy1(500, 500, 0, 0);
+
+    while(!IsCloseScript(idScript) && GetPlayerState() != STATE_END)
+    {
+        yield;
+    }
+
+    loop(240){yield;}
+
+    CloseStgScene();
+}

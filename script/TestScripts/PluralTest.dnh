@@ -1,0 +1,33 @@
+#TouhouDanmakufu[Plural]
+#ScriptVersion[3]
+#Title["Testing"]
+#Text["Test"]
+#System["script/MyGame/system/Default_System.dnh"] 
+
+
+@Event{
+}
+
+@Initialize{
+	TPlural; // Task to load the singles
+}
+
+@MainLoop{
+	yield;
+}
+
+task TPlural{
+	let dir = GetCurrentScriptDirectory();
+	let obj = ObjEnemyBossScene_Create(); // Creates the plural scene to register singles to
+
+
+	ObjEnemyBossScene_Add(obj, 0, dir ~ "single1.dnh");
+	ObjEnemyBossScene_Add(obj, 1, dir ~ "single2.dnh");
+
+    ObjEnemyBossScene_LoadInThread(obj);
+    ObjEnemyBossScene_Regist(obj);
+    while(!Obj_IsDeleted(obj)){
+        yield;
+    }
+    CloseScript(GetOwnScriptID());
+}

@@ -1,8 +1,8 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
-#Title["Hansen's Code"]
-#Text["Following Tutorial"]
-#System["script/TutorialSeries/system/Default_System.dnh"]  //This path is relative to the location of the Danmakufu .exe file
+#Title["Daisy vs World"]
+#Text["Work in Progress"]
+#System["script/MyGame/system/Default_System.dnh"]  //This path is relative to the location of the Danmakufu .exe file
 
 let bossObj;
 let playerObj = GetPlayerObjectID();
@@ -74,35 +74,39 @@ let flashSFX = GetCurrentScriptDirectory() ~ "sfx/flash-sound.mp3";
 	
 	// Activate blink when pressing the specified key
 	let blinkDist = 100; // Specifies how many pixels the player blinks
-	if(GetVirtualKeyState(VK_SPELL) == KEY_PUSH){
-		if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //topleft
+	let playerDir = GetPlayerDir();
+
+	if(GetKeyState(KEY_SPACE) == KEY_PUSH){
+		if (playerDir == 225){ //topleft
 			ObjMove_SetPosition(playerObj, GetPlayerX() - blinkDist/1.414, GetPlayerY() - blinkDist/1.414);
 		}
-		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //topright
+		else if (playerDir == 315){ //topright
 			ObjMove_SetPosition(playerObj, GetPlayerX() + blinkDist/1.414, GetPlayerY() - blinkDist/1.414);
 		}
-		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //botleft
+		else if (playerDir == 135){ //botleft
 			ObjMove_SetPosition(playerObj, GetPlayerX() - blinkDist/1.414, GetPlayerY() + blinkDist/1.414);
 		}
-		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //botright
+		else if (playerDir == 45){ //botright
 			ObjMove_SetPosition(playerObj, GetPlayerX() + blinkDist/1.414, GetPlayerY() + blinkDist/1.414);
 		}
-		else if(GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //left
+		else if(playerDir == 180){ //left
 			ObjMove_SetPosition(playerObj, GetPlayerX() - blinkDist, GetPlayerY());
 		}
-		else if (GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //right
+		else if (playerDir == 0){ //right
 			ObjMove_SetPosition(playerObj, GetPlayerX() + blinkDist, GetPlayerY());
 		}
-		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD){ //up
+		else if (playerDir == 270){ //up
 			ObjMove_SetPosition(playerObj, GetPlayerX(), GetPlayerY() - blinkDist);
 		}
-		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD){ //down
+		else if (playerDir == 90){ //down
 			ObjMove_SetPosition(playerObj, GetPlayerX(), GetPlayerY() + blinkDist);
 		}
 
-		flashAnimation; //Trigger the flash effect
-		SetPlayerInvincibilityFrame(20); //Iframes for after blink
-		PlaySE(flashSFX);
+		if (playerDir != -1){ //If we aren't trying to blink in place
+			flashAnimation; //Trigger the flash effect
+			SetPlayerInvincibilityFrame(20); //Iframes for after blink
+			PlaySE(flashSFX);
+		}
 
 	}
 
@@ -115,6 +119,37 @@ let flashSFX = GetCurrentScriptDirectory() ~ "sfx/flash-sound.mp3";
 }
 
 function wait(w){ loop(w){yield; }}
+
+
+function GetPlayerDir(){
+		if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //topleft
+			return 225;
+		}
+		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //topright
+			return 315;
+		}
+		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //botleft
+			return 135;
+		}
+		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //botright
+			return 45;
+		}
+		else if(GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //left
+			return 180;
+		}
+		else if (GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //right
+			return 0;
+		}
+		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD){ //up
+			return 270;
+		}
+		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD){ //down
+			return 90;
+		}
+		else {
+			return -1;
+		}
+}
 
 
 task mainTask{

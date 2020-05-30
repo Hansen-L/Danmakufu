@@ -1,0 +1,100 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title[]
+#Text[]
+
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+let imgBoss = GetCurrentScriptDirectory() ~ "Robotcat.png";
+
+let bossObj;
+let bossX = 0;
+let bossY = 0;
+
+@Initialize{
+
+	SetAutoDeleteObject(true);
+
+	bossObj = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+	ObjEnemy_Regist(bossObj);
+
+	ObjMove_SetPosition(bossObj, 1000, 400);
+
+	mainTask;
+}
+
+@MainLoop{
+	bossX = ObjMove_GetX(bossObj);  // Updates bossX and bossY global variables
+	bossY = ObjMove_GetY(bossObj);
+
+	// collision for boss
+	ObjEnemy_SetIntersectionCircleToShot(bossObj, bossX, bossY, 24);
+	ObjEnemy_SetIntersectionCircleToPlayer(bossObj, bossX, bossY, 40);
+	
+	yield;
+
+}
+
+@Event{
+	// set boss timer and life
+	alternative(GetEventType())
+	case(EV_REQUEST_LIFE){
+		SetScriptResult(300);
+	}
+	case(EV_REQUEST_TIMER) {
+		SetScriptResult(45);
+	}
+	case(EV_REQUEST_SPELL_SCORE) {
+		SetScriptResult(30000);
+	}
+}
+
+
+function wait(w){ loop(w) { yield; } }
+
+
+task mainTask{
+	renderBoss;
+	fire;
+	TEnd;
+}
+
+
+task fire{
+	loop{
+		CreateShotA1(bossX, bossY, 5, 90 - 10 * rand(0.7, 1), 20, 0);
+		CreateShotA1(bossX, bossY, 5, 90 + rand(0.7, 1), 20, 0);
+		CreateShotA1(bossX, bossY, 5, 90 + 10 * rand(0.7, 1), 20, 0);
+		wait(1);
+	}
+}
+
+
+task renderBoss{
+	let dir;
+	let speed;
+
+	ObjPrim_SetTexture(bossObj, imgBoss);
+	ObjSprite2D_SetSourceRect(bossObj, 1, 1, 84, 84);
+	ObjSprite2D_SetDestCenter(bossObj);  // This center no longer needs to be set for each new sprite?
+	ObjRender_SetScaleXYZ(bossObj, 1, 1, 0);
+
+	while ( !Obj_IsDeleted(bossObj) ){
+		ObjSprite2D_SetSourceRect(bossObj, 1, 1, 84, 84);
+
+		yield;
+	}
+
+}
+
+
+task TEnd{
+	while (ObjEnemy_GetInfo(bossObj, INFO_LIFE) > 0) {
+		yield;
+	}
+
+	Obj_Delete(bossObj);
+	DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+	wait(30);
+	CloseScript(GetOwnScriptID());
+}
