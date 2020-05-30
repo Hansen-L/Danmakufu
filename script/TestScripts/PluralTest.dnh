@@ -21,13 +21,13 @@ task TPlural{
 	let obj = ObjEnemyBossScene_Create(); // Creates the plural scene to register singles to
 
 
-	ObjEnemyBossScene_Add(obj, 0, dir ~ "single1.dnh");
-	ObjEnemyBossScene_Add(obj, 1, dir ~ "single2.dnh");
+	ObjEnemyBossScene_Add(obj, 0, dir ~ "blank.dnh");
+	//ObjEnemyBossScene_Add(obj, 1, dir ~ "single2.dnh");
 
     ObjEnemyBossScene_LoadInThread(obj);
     ObjEnemyBossScene_Regist(obj);
     while(!Obj_IsDeleted(obj)){
-        yield;
+    	yield;
     }
     CloseScript(GetOwnScriptID());
 }
