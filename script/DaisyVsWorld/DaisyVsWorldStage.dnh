@@ -1,0 +1,49 @@
+#TouhouDanmakufu[Stage]
+#ScriptVersion[3]
+#Title["Daisy vs World"]
+#Text["One dog to rule them all"]
+#System["script/DaisyVsWorld/system/Default_System.dnh"] 
+#Background["script/DaisyVsWorld/background.dnh"]
+
+#include "script/DaisyVsWorld/enemies/EnemyByShotAngle.dnh"
+#include "./abilities.dnh"
+
+@Initialize
+{   
+    SetPlayerLife(5);
+    TStage();
+}
+
+@MainLoop
+{
+	// Activate blink when pressing the specified key
+	if(GetKeyState(KEY_X) == KEY_PUSH) {blink();}
+    yield;
+}
+
+@Finalize
+{
+}
+
+task TStage{
+    roundOne;
+    // Check if all enemies are dead
+    while(GetAllEnemyID() && GetPlayerState() != STATE_END) {yield;}
+    // Wait a bit
+    loop(120){yield;}
+    // End the level
+    CloseStgScene();
+}
+
+task roundOne{
+    // First round of enemies
+    let enemyHealth = 30;
+    CreateStageEnemyByShotAngle(200, 200, 45, enemyHealth);
+    CreateStageEnemyByShotAngle(960, 200, 90, enemyHealth);
+    CreateStageEnemyByShotAngle(200, 540, 0, enemyHealth);
+    CreateStageEnemyByShotAngle(1720, 200, 135, enemyHealth);
+    CreateStageEnemyByShotAngle(1720, 540, 180, enemyHealth);
+    CreateStageEnemyByShotAngle(200, 880, -45, enemyHealth);
+    CreateStageEnemyByShotAngle(960, 880, 270, enemyHealth);
+    CreateStageEnemyByShotAngle(1720, 880, 225, enemyHealth);
+}

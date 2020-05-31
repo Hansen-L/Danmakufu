@@ -2,7 +2,6 @@
 #ScriptVersion[3]
 #Title["single1"]
 #Text["single1"]
-#System["script/MyGame/system/Default_System.dnh"] 
 
 #include"script/default_system/Default_ShotConst.txt"
 #include"script/default_system/Default_Effect.txt"

@@ -1,0 +1,33 @@
+// Useful functions
+
+function GetPlayerDir(){
+		if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //topleft
+			return 225;
+		}
+		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //topright
+			return 315;
+		}
+		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //botleft
+			return 135;
+		}
+		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //botright
+			return 45;
+		}
+		else if(GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //left
+			return 180;
+		}
+		else if (GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //right
+			return 0;
+		}
+		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD){ //up
+			return 270;
+		}
+		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD){ //down
+			return 90;
+		}
+		else {
+			return -1;
+		}
+}
+
+function wait(w){ loop(w) { yield; } }

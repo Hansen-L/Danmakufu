@@ -1,0 +1,59 @@
+let flashSFX = GetCurrentScriptDirectory() ~ "/sfx/flash-sound.mp3";
+let flash = GetCurrentScriptDirectory() ~ "/visuals/flash.png";
+
+#include "./util.dnh"
+
+let playerObj = GetPlayerObjectID();
+
+function blink(){
+	let blinkDist = 100; // Specifies how many pixels the player blinks
+	let playerDir = GetPlayerDir();
+
+	if (playerDir == 225){ //topleft
+		ObjMove_SetPosition(playerObj, GetPlayerX() - blinkDist/1.414, GetPlayerY() - blinkDist/1.414);
+	}
+	else if (playerDir == 315){ //topright
+		ObjMove_SetPosition(playerObj, GetPlayerX() + blinkDist/1.414, GetPlayerY() - blinkDist/1.414);
+	}
+	else if (playerDir == 135){ //botleft
+		ObjMove_SetPosition(playerObj, GetPlayerX() - blinkDist/1.414, GetPlayerY() + blinkDist/1.414);
+	}
+	else if (playerDir == 45){ //botright
+		ObjMove_SetPosition(playerObj, GetPlayerX() + blinkDist/1.414, GetPlayerY() + blinkDist/1.414);
+	}
+	else if(playerDir == 180){ //left
+		ObjMove_SetPosition(playerObj, GetPlayerX() - blinkDist, GetPlayerY());
+	}
+	else if (playerDir == 0){ //right
+		ObjMove_SetPosition(playerObj, GetPlayerX() + blinkDist, GetPlayerY());
+	}
+	else if (playerDir == 270){ //up
+		ObjMove_SetPosition(playerObj, GetPlayerX(), GetPlayerY() - blinkDist);
+	}
+	else if (playerDir == 90){ //down
+		ObjMove_SetPosition(playerObj, GetPlayerX(), GetPlayerY() + blinkDist);
+	}
+
+	if (playerDir != -1){ //If we aren't trying to blink in place
+		flashAnimation; //Trigger the flash effect
+		SetPlayerInvincibilityFrame(20); //Iframes for after blink
+		PlaySE(flashSFX);
+	}
+}
+
+task flashAnimation{
+	let i = 0;
+	let flashSize = 40;
+	let flashObj = ObjPrim_Create(OBJ_SPRITE_2D);		
+
+	loop(6){
+		i+=1;
+
+		Obj_SetRenderPriorityI(flashObj, 100);
+		ObjPrim_SetTexture(flashObj, flash);
+		ObjSprite2D_SetSourceRect(flashObj, flashSize * (i-1), 0, flashSize * i, flashSize);
+		ObjSprite2D_SetDestRect(flashObj, GetPlayerX() - 40, GetPlayerY() - 40, GetPlayerX() + 40, GetPlayerY() + 40);
+		wait(5);
+	}
+	Obj_Delete(flashObj);
+}

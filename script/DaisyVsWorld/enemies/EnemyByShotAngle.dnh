@@ -1,0 +1,69 @@
+#include"script/default_system/Default_ShotConst.txt"
+#include"script/default_system/Default_Effect.txt"
+
+#include "../util.dnh"
+
+task CreateStageEnemyByShotAngle(x, y, shotAngle, health) {
+    let objEnemy;
+    let enemyX;
+    let enemyY;
+    let count = 0;
+    let imgEnemy = GetCurrentScriptDirectory() ~ "../visuals/Robotcat.png";
+    WriteLog(GetCurrentScriptDirectory());
+
+    TInitialize; // Make the enemy
+
+    task TInitialize {
+        objEnemy = ObjEnemy_Create(OBJ_ENEMY);
+        ObjEnemy_Regist(objEnemy);
+        ObjEnemy_SetLife(objEnemy, health);
+
+        ObjMove_SetPosition(objEnemy, x, y);
+
+        // Track the location of the enemy. This enemy is static though, so this is unnecessary
+        enemyX = x;
+        enemyY = y;
+
+        TMainLoop;
+        TFinalize;
+    }
+
+    task TMainLoop {
+        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
+            renderEnemy;
+
+            // Enemy hitbox
+            ObjEnemy_SetIntersectionCircleToShot(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 32); 
+            ObjEnemy_SetIntersectionCircleToPlayer(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 8);
+        
+            // Wait 30 frames before start shooting
+            if (count == 30) {fireStraight;}
+            count++;
+            yield;
+        }
+    }
+
+    task renderEnemy{
+        ObjPrim_SetTexture(objEnemy, imgEnemy);
+        ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
+        ObjSprite2D_SetDestCenter(objEnemy);  // This center no longer needs to be set for each new sprite?
+        ObjRender_SetScaleXYZ(objEnemy, 1, 1, 0);
+
+        while ( !Obj_IsDeleted(objEnemy) ){
+            ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
+            yield;
+        }
+    }
+
+    task fireStraight{
+        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
+            CreateShotA1(enemyX, enemyY, 5, shotAngle + rand(-20, 20), 105, 0);
+            wait(10);
+        }
+    }
+
+    task TFinalize {
+        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {yield;}
+        Obj_Delete(objEnemy);
+    }
+}

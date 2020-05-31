@@ -2,13 +2,14 @@
 #ScriptVersion[3]
 #Title["Stage Test"]
 #Text["Stage Test"]
-#System["script/MyGame/system/Default_System.dnh"] 
+#System["script/DaisyVsWorld/system/Default_System.dnh"] 
 #include "./StageEnemy1.dnh"
 
 let background = "script/MyGame/visuals/isaac.png";
 
 @Initialize
 {   
+    SetPlayerLife(5);
     TStage();
     renderBG;
 }
@@ -32,25 +33,25 @@ task renderBG{
 
 task TStage
 {
-    let dir = GetCurrentScriptDirectory();
+    roundOne;
 
+    // Check if all enemies are dead
+    while(GetAllEnemyID() && GetPlayerState() != STATE_END) {yield;}
+
+    loop(120){yield;}
+
+    CloseStgScene();
+}
+
+task roundOne{
     // First round of enemies
     let enemyHealth = 30;
     CreateStageEnemyByShotAngle(200, 200, 45, enemyHealth);
-    CreateStageEnemyByShotAngle(960, 200, 135, enemyHealth);
+    CreateStageEnemyByShotAngle(960, 200, 90, enemyHealth);
     CreateStageEnemyByShotAngle(200, 540, 0, enemyHealth);
     CreateStageEnemyByShotAngle(1720, 200, 135, enemyHealth);
     CreateStageEnemyByShotAngle(1720, 540, 180, enemyHealth);
     CreateStageEnemyByShotAngle(200, 880, -45, enemyHealth);
     CreateStageEnemyByShotAngle(960, 880, 270, enemyHealth);
     CreateStageEnemyByShotAngle(1720, 880, 225, enemyHealth);
-
-    while(GetAllEnemyID() && GetPlayerState() != STATE_END)
-    {
-        yield;
-    }
-
-    loop(120){yield;}
-
-    CloseStgScene();
 }

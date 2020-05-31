@@ -1,0 +1,17 @@
+let dir = GetCurrentScriptDirectory();
+
+@Initialize
+{
+	renderBG;
+}
+
+task renderBG
+{
+	let backgroundImage = dir ~ "visuals/Osaka.png";
+	let bgObj = ObjPrim_Create(OBJ_SPRITE_2D);
+
+	Obj_SetRenderPriorityI(bgObj,20);
+	ObjPrim_SetTexture(bgObj,backgroundImage);
+	ObjSprite2D_SetSourceRect(bgObj,0,0,1920,1080);
+	ObjSprite2D_SetDestRect(bgObj,0,0,GetStgFrameWidth,GetStgFrameHeight);
+}
