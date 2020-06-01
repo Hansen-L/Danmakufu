@@ -1,8 +1,11 @@
 let dir = GetCurrentScriptDirectory();
+let backgroundMusic = dir ~ "sfx/megalovania.mp3";
 
 @Initialize
 {
+	LoadSound(backgroundMusic);
 	renderBG;
+	//playMusic;
 }
 
 task renderBG
@@ -14,4 +17,8 @@ task renderBG
 	ObjPrim_SetTexture(bgObj,backgroundImage);
 	ObjSprite2D_SetSourceRect(bgObj,0,0,1920,1080);
 	ObjSprite2D_SetDestRect(bgObj,0,0,GetStgFrameWidth,GetStgFrameHeight);
+}
+
+task playMusic{
+	PlayBGM(backgroundMusic, 0, 99999);
 }

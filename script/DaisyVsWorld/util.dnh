@@ -1,5 +1,4 @@
 // Useful functions
-
 function GetPlayerDir(){
 		if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //topleft
 			return 225;
@@ -31,3 +30,25 @@ function GetPlayerDir(){
 }
 
 function wait(w){ loop(w) { yield; } }
+
+task screenshake(shakeamount,length){ // Total duration of screenshake is length*4 frames
+	let delay = 1;		
+	let origshakeamount = shakeamount;
+	
+	loop(length){
+	Set2DCameraFocusX(GetScreenWidth/2+shakeamount);
+	Set2DCameraFocusY(GetScreenHeight/2+shakeamount);
+	wait(delay);
+	Set2DCameraFocusX(GetScreenWidth/2-shakeamount);
+	Set2DCameraFocusY(GetScreenHeight/2-shakeamount);
+	wait(delay);
+	Set2DCameraFocusX(GetScreenWidth/2+shakeamount);
+	Set2DCameraFocusY(GetScreenHeight/2-shakeamount);
+	wait(delay);
+	Set2DCameraFocusX(GetScreenWidth/2-shakeamount);
+	Set2DCameraFocusY(GetScreenHeight/2+shakeamount);
+	wait(delay);
+	shakeamount-=origshakeamount/length;} // Shake less over time
+	Set2DCameraFocusX(GetScreenWidth/2);
+	Set2DCameraFocusY(GetScreenHeight/2);
+}

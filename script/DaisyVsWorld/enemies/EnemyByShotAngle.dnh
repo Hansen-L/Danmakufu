@@ -9,11 +9,15 @@ task CreateStageEnemyByShotAngle(x, y, shotAngle, health) {
     let enemyY;
     let count = 0;
     let imgEnemy = GetCurrentScriptDirectory() ~ "../visuals/Robotcat.png";
-    WriteLog(GetCurrentScriptDirectory());
+    let deathSFX = GetCurrentScriptDirectory() ~ "../sfx/death.mp3";
+    let damageSFX = GetCurrentScriptDirectory() ~ "../sfx/damage.mp3";
 
     TInitialize; // Make the enemy
 
     task TInitialize {
+        LoadSound(deathSFX);
+        LoadSound(damageSFX);
+
         objEnemy = ObjEnemy_Create(OBJ_ENEMY);
         ObjEnemy_Regist(objEnemy);
         ObjEnemy_SetLife(objEnemy, health);
@@ -31,6 +35,10 @@ task CreateStageEnemyByShotAngle(x, y, shotAngle, health) {
     task TMainLoop {
         while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
             renderEnemy;
+            damageEffect();
+            if (ObjEnemy_GetInfo(objEnemy, INFO_SHOT_HIT_COUNT) > 0){
+                PlaySE(damageSFX);
+            }
 
             // Enemy hitbox
             ObjEnemy_SetIntersectionCircleToShot(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 32); 
@@ -49,21 +57,31 @@ task CreateStageEnemyByShotAngle(x, y, shotAngle, health) {
         ObjSprite2D_SetDestCenter(objEnemy);  // This center no longer needs to be set for each new sprite?
         ObjRender_SetScaleXYZ(objEnemy, 1, 1, 0);
 
-        while ( !Obj_IsDeleted(objEnemy) ){
+        while (!Obj_IsDeleted(objEnemy)){
             ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
             yield;
         }
     }
 
     task fireStraight{
-        while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
-            CreateShotA1(enemyX, enemyY, 5, shotAngle + rand(-20, 20), 105, 0);
-            wait(10);
+        let randRange = 10;
+        while (ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
+            CreateShotA1(enemyX, enemyY, 7, shotAngle + rand(-randRange, randRange), 76, 0);
+            wait(5);
+        }
+    }
+
+    function damageEffect(){
+        if (ObjEnemy_GetInfo(objEnemy, INFO_SHOT_HIT_COUNT) > 0){
+            PlaySE(damageSFX);
         }
     }
 
     task TFinalize {
         while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {yield;}
+        PlaySE(deathSFX);
+        TExplosionA(x, y, 10, 0.1);
+        screenshake(2,3);
         Obj_Delete(objEnemy);
     }
 }

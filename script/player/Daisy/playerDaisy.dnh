@@ -5,10 +5,13 @@
 #Text["Daisy"]
 #ReplayName["Daisy"]
 
-let CSD = GetCurrentScriptDirectory();
+#include "../../DaisyVsWorld/util.dnh"
+
+let dir = GetCurrentScriptDirectory();
 let playerID = GetPlayerObjectID();
 let playerObj = ObjPrim_Create(OBJ_SPRITE_2D);
 let hitboxObj = ObjPrim_Create(OBJ_SPRITE_2D);
+
 let count = -1;
 let isFocus = false;
 let curDirection = "L";
@@ -20,19 +23,14 @@ let prevDir = 270;
 let spriteSizeX = 48;
 let spriteSizeY = 55;
 
-let shotAdventurer = CSD ~ "playershot.dnh";
-
-let playerSprite = CSD ~ "Daisy-Sheet.png";
+let shotAdventurer = dir ~ "playershot.dnh";
+let playerSprite = dir ~ "Daisy-Sheet.png";
 
 @Initialize{
 	LoadPlayerShotData(shotAdventurer);
-
 	SetPlayerSpeed(5, 2.5);
-
 	ObjPlayer_AddIntersectionCircleA1(playerID, 0, 0, 2, 16);
-
 	SetPlayerClip(6, 24, 1900, 1060);
-
 	SetPlayerDownStateFrame(60);
 	SetPlayerRebirthFrame(30);
 	SetPlayerAutoItemCollectLine(120);
@@ -46,11 +44,10 @@ let playerSprite = CSD ~ "Daisy-Sheet.png";
 			SetScriptResult(true);
 		}
 		else{
-			SetScriptResult(false); //placeholder to prevent bug when using spell
+			SetScriptResult(false); // placeholder to prevent bug when using spell
 		}
-
 	}
-	case(EV_PLAYER_SHOOTDOWN){ //when player died
+	case(EV_PLAYER_SHOOTDOWN){ // when player died
 		SetForbidPlayerShot(true);
 		SetForbidPlayerSpell(true);
 	}
@@ -63,8 +60,9 @@ let playerSprite = CSD ~ "Daisy-Sheet.png";
 }
 
 @MainLoop{
-	let playerDir = GetPlayerDir(); //Find the angle the player is facing, generate shots based on that
-	if (playerDir == -1) { //If we let go of the move button, use last used direction
+	let randRange = 0; // Adding randomness to player spray
+	let playerDir = GetPlayerDir(); // Find the angle the player is facing, generate shots based on that
+	if (playerDir == -1) { // If we let go of the move button, use last used direction
 		playerDir = prevDir;
 	}
 	prevDir = playerDir;
@@ -72,15 +70,12 @@ let playerSprite = CSD ~ "Daisy-Sheet.png";
 	if (IsPermitPlayerShot()){
 		if(GetVirtualKeyState(VK_SHOT) == KEY_PUSH || GetVirtualKeyState(VK_SHOT) == KEY_HOLD){
 			count++;
-
-			if (count > 1){
-
-				//Spread of 3 shots 15 degrees apart, with random angle added from -5 to 5
-				CreatePlayerShotA1(GetPlayerX(), GetPlayerY(), 15, playerDir - 15 + rand(-5, 5), 5, 1, 1);
-				CreatePlayerShotA1(GetPlayerX(), GetPlayerY(), 15, playerDir + rand(-5, 5), 5, 1, 1);
-				CreatePlayerShotA1(GetPlayerX(), GetPlayerY(), 15, playerDir + 15 + rand(-5, 5), 5, 1, 1);
+			if (count > 5){
+				// Spread of 3 shots 15 degrees apart, with random angle added from -5 to 5
+				CreatePlayerShotA1(GetPlayerX(), GetPlayerY(), 15, playerDir - 15 + rand(-randRange, randRange), 5, 1, 1);
+				CreatePlayerShotA1(GetPlayerX(), GetPlayerY(), 15, playerDir + rand(-randRange, randRange), 5, 1, 1);
+				CreatePlayerShotA1(GetPlayerX(), GetPlayerY(), 15, playerDir + 15 + rand(-randRange, randRange), 5, 1, 1);
 				count = 0;
-
 			}
 		}
 	}
@@ -88,49 +83,16 @@ let playerSprite = CSD ~ "Daisy-Sheet.png";
 	yield;
 }
 
-function GetPlayerDir(){
-		if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //topleft
-			return 225;
-		}
-		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //topright
-			return 315;
-		}
-		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //botleft
-			return 135;
-		}
-		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD && GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //botright
-			return 45;
-		}
-		else if(GetVirtualKeyState(VK_LEFT) == KEY_HOLD){ //left
-			return 180;
-		}
-		else if (GetVirtualKeyState(VK_RIGHT) == KEY_HOLD){ //right
-			return 0;
-		}
-		else if (GetVirtualKeyState(VK_UP) == KEY_HOLD){ //up
-			return 270;
-		}
-		else if (GetVirtualKeyState(VK_DOWN) == KEY_HOLD){ //down
-			return 90;
-		}
-		else {
-			return -1;
-		}
-}
-
-
 task renderPlayer {
 	ObjPrim_SetTexture(playerObj, playerSprite);
 	Obj_SetRenderPriority(playerObj, 31);
-	ObjSprite2D_SetSourceRect(playerObj, 0, 1, spriteSizeX, spriteSizeY); //initial render, doesn't run in loop
+	ObjSprite2D_SetSourceRect(playerObj, 0, 1, spriteSizeX, spriteSizeY); // initial render, doesn't run in loop
 	ObjSprite2D_SetDestCenter(playerObj);
 	ObjRender_SetScaleXYZ(playerObj, 1, 1, 1);
 
 	while(!Obj_IsDeleted(playerObj)) {
 		ObjRender_SetPosition(playerObj, GetPlayerX(), GetPlayerY(), 0);
-
 		let playerDir = GetPlayerDir();
-
 
 		ObjRender_SetAngleZ(playerObj, 0);
 		alternative(playerDir)
@@ -191,7 +153,6 @@ task renderPlayer {
 		case(-1){ //Idle
 		}
 
-		
 		if (curDirection == "TL" || curDirection == "TR" || curDirection == "BR" || curDirection == "BL"){ //If moving diag TL or TR
 			if (runTLTRFrame >= 0 && runTLTRFrame < 15){
 				ObjSprite2D_SetSourceRect(playerObj, 5*spriteSizeX + 1, 1, 6*spriteSizeX, spriteSizeY); 
