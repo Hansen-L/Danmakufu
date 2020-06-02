@@ -52,3 +52,9 @@ task screenshake(shakeamount,length){ // Total duration of screenshake is length
 	Set2DCameraFocusX(GetScreenWidth/2);
 	Set2DCameraFocusY(GetScreenHeight/2);
 }
+
+function angleToPlayer(objEnemy) { // Angle from enemy object to player
+	let enemyPosition = GetObject2dPosition(objEnemy);
+	let dir = atan2(GetPlayerY-enemyPosition[1],GetPlayerX-enemyPosition[0]);
+	return dir;
+}

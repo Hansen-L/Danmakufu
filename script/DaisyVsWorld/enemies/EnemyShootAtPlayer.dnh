@@ -3,7 +3,7 @@
 
 #include "../util.dnh"
 
-task CreateEnemyByShotAngle(x, y, shotAngle, health) {
+task CreateEnemyShootAtPlayer(x, y, health) {
     let objEnemy;
     let enemyX;
     let enemyY;
@@ -42,7 +42,7 @@ task CreateEnemyByShotAngle(x, y, shotAngle, health) {
             ObjEnemy_SetIntersectionCircleToPlayer(objEnemy, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 8);
         
             // Wait 30 frames before start shooting
-            if (count == 30) {fireStraight;}
+            if (count == 30) {fireAtPlayer;}
             count++;
             yield;
         }
@@ -60,10 +60,12 @@ task CreateEnemyByShotAngle(x, y, shotAngle, health) {
         }
     }
 
-    task fireStraight{
+    task fireAtPlayer{
         let randRange = 10;
+        let shotAngle;
         while (ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
-            CreateShotA1(enemyX, enemyY, 7, shotAngle + rand(-randRange, randRange), 76, 0);
+            shotAngle = GetAngleToPlayer(objEnemy);
+            CreateShotA1(enemyX, enemyY, 7, shotAngle + rand(-randRange, randRange), 100, 0);
             wait(5);
         }
     }
