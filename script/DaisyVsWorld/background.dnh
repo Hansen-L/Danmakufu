@@ -5,7 +5,7 @@ let backgroundMusic = dir ~ "sfx/megalovania.mp3";
 {
 	LoadSound(backgroundMusic);
 	renderBG;
-	playMusic;
+	//playMusic;
 }
 
 task renderBG

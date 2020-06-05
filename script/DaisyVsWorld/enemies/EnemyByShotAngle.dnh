@@ -9,6 +9,7 @@ task CreateEnemyByShotAngle(x, y, shotAngle, health) {
     let enemyY;
     let count = 0;
     let imgEnemy = GetCurrentScriptDirectory() ~ "../visuals/Robotcat.png";
+    let explosion = GetCurrentScriptDirectory() ~ "../visuals/explosion.png";
     let deathSFX = GetCurrentScriptDirectory() ~ "../sfx/death.mp3";
     let damageSFX = GetCurrentScriptDirectory() ~ "../sfx/damage.wav";
     let damageSFXObj = createSFXObject(damageSFX, 100);
@@ -73,11 +74,30 @@ task CreateEnemyByShotAngle(x, y, shotAngle, health) {
         }
     }
 
+    function explosionAnimation(spritesheetPath){
+        let i = 0;
+        let spriteSize = 128;
+        let spritesheetObj = ObjPrim_Create(OBJ_SPRITE_2D);        
+
+        // Animation at player destination
+        loop(12){
+            i+=1;
+
+            Obj_SetRenderPriorityI(spritesheetObj, 100);
+            ObjPrim_SetTexture(spritesheetObj, spritesheetPath);
+            ObjSprite2D_SetSourceRect(spritesheetObj, spriteSize * (i-1), 0, spriteSize * i, spriteSize);
+            ObjSprite2D_SetDestRect(spritesheetObj, x - spriteSize/2, y - spriteSize/2, x + spriteSize/2, y + spriteSize/2);
+            wait(2);
+            yield;
+        }
+        Obj_Delete(spritesheetObj);
+    }
+
     task TFinalize {
         while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {yield;}
         playSFX(deathSFXObj);
-        TExplosionA(x, y, 10, 0.1);
         screenshake(2,3);
         Obj_Delete(objEnemy);
+        explosionAnimation(explosion);
     }
 }

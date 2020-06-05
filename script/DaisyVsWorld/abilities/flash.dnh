@@ -8,8 +8,6 @@ let playerObj = GetPlayerObjectID();
 let initialX; // Store player location before flash
 let initialY;
 let flashSFXObj = createSFXObject(flashSFX, 100);
-//LoadSound(flashSFX);
-
 
 function blink(){
 	let blinkDist = 100; // Specifies how many pixels the player blinks
