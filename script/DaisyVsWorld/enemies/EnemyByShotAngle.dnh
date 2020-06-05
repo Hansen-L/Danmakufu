@@ -10,14 +10,13 @@ task CreateEnemyByShotAngle(x, y, shotAngle, health) {
     let count = 0;
     let imgEnemy = GetCurrentScriptDirectory() ~ "../visuals/Robotcat.png";
     let deathSFX = GetCurrentScriptDirectory() ~ "../sfx/death.mp3";
-    let damageSFX = GetCurrentScriptDirectory() ~ "../sfx/damage.mp3";
+    let damageSFX = GetCurrentScriptDirectory() ~ "../sfx/damage.wav";
+    let damageSFXObj = createSFXObject(damageSFX, 100);
+    let deathSFXObj = createSFXObject(deathSFX, 100);
 
     TInitialize; // Make the enemy
 
     task TInitialize {
-        LoadSound(deathSFX);
-        LoadSound(damageSFX);
-
         objEnemy = ObjEnemy_Create(OBJ_ENEMY);
         ObjEnemy_Regist(objEnemy);
         ObjEnemy_SetLife(objEnemy, health);
@@ -70,13 +69,13 @@ task CreateEnemyByShotAngle(x, y, shotAngle, health) {
 
     function damageEffect(){
         if (ObjEnemy_GetInfo(objEnemy, INFO_SHOT_HIT_COUNT) > 0){
-            PlaySE(damageSFX);
+            playSFX(damageSFXObj);
         }
     }
 
     task TFinalize {
         while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {yield;}
-        PlaySE(deathSFX);
+        playSFX(deathSFXObj);
         TExplosionA(x, y, 10, 0.1);
         screenshake(2,3);
         Obj_Delete(objEnemy);

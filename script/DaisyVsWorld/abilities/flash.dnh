@@ -1,14 +1,15 @@
-let flashSFX = GetCurrentScriptDirectory() ~ "/sfx/flash-sound.mp3";
-let flashEnd = GetCurrentScriptDirectory() ~ "/visuals/flash-end.png";
-let flashStart = GetCurrentScriptDirectory() ~ "/visuals/flash-start.png";
+let flashSFX = GetCurrentScriptDirectory() ~ "../sfx/flash-sound.mp3";
+let flashEnd = GetCurrentScriptDirectory() ~ "../visuals/flash-end.png";
+let flashStart = GetCurrentScriptDirectory() ~ "../visuals/flash-start.png";
 
-#include "./util.dnh"
+#include "./../util.dnh"
 
 let playerObj = GetPlayerObjectID();
 let initialX; // Store player location before flash
 let initialY;
+let flashSFXObj = createSFXObject(flashSFX, 100);
+//LoadSound(flashSFX);
 
-LoadSound(flashSFX);
 
 function blink(){
 	let blinkDist = 100; // Specifies how many pixels the player blinks
@@ -44,7 +45,7 @@ function blink(){
 		flashStartAnimation; // Trigger the flash effect
 		flashEndAnimation;
 		SetPlayerInvincibilityFrame(20); // Iframes for after blink
-		PlaySE(flashSFX);
+		playSFX(flashSFXObj); // Calls util function to play sound effect
 		screenshake(3, 8);
 	}
 }

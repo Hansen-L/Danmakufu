@@ -58,3 +58,15 @@ function angleToPlayer(objEnemy) { // Angle from enemy object to player
 	let dir = atan2(GetPlayerY-enemyPosition[1],GetPlayerX-enemyPosition[0]);
 	return dir;
 }
+
+function createSFXObject(sfxPath, volume){
+    let obj = ObjSound_Create();
+    ObjSound_Load(obj, sfxPath);
+    ObjSound_SetSoundDivision(obj, SOUND_SE);
+    ObjSound_SetVolumeRate(obj, volume);
+    return obj;
+}
+
+function playSFX(sfxObj){
+	ObjSound_Play(sfxObj);
+}

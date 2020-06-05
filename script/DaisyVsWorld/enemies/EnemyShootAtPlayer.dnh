@@ -8,9 +8,12 @@ task CreateEnemyShootAtPlayer(x, y, health) {
     let enemyX;
     let enemyY;
     let count = 0;
+    let animFrame = rand(0, 59);
     let imgEnemy = GetCurrentScriptDirectory() ~ "../visuals/Robotcat.png";
     let deathSFX = GetCurrentScriptDirectory() ~ "../sfx/death.mp3";
-    let damageSFX = GetCurrentScriptDirectory() ~ "../sfx/damage.mp3";
+    let damageSFX = GetCurrentScriptDirectory() ~ "../sfx/damage.wav";
+    let damageSFXObj = createSFXObject(damageSFX, 100);
+    let deathSFXObj = createSFXObject(deathSFX, 100);
 
     TInitialize; // Make the enemy
 
@@ -33,8 +36,8 @@ task CreateEnemyShootAtPlayer(x, y, health) {
     }
 
     task TMainLoop {
+        renderEnemy;
         while(ObjEnemy_GetInfo(objEnemy, INFO_LIFE) > 0) {
-            renderEnemy;
             damageEffect();
 
             // Enemy hitbox
@@ -49,13 +52,29 @@ task CreateEnemyShootAtPlayer(x, y, health) {
     }
 
     task renderEnemy{
+        let enemySizeX = 84;
+        let enemySizeY = 84;
+
         ObjPrim_SetTexture(objEnemy, imgEnemy);
-        ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
+        ObjSprite2D_SetSourceRect(objEnemy, 1, 1, enemySizeX, enemySizeY);
         ObjSprite2D_SetDestCenter(objEnemy);  // This center no longer needs to be set for each new sprite?
         ObjRender_SetScaleXYZ(objEnemy, 1, 1, 0);
 
-        while (!Obj_IsDeleted(objEnemy)){
-            ObjSprite2D_SetSourceRect(objEnemy, 1, 1, 84, 84);
+        while ( !Obj_IsDeleted(objEnemy) ){
+            if (animFrame < 15){
+                ObjSprite2D_SetSourceRect(objEnemy, 1, 1, enemySizeX, enemySizeY);
+            }
+            else if (animFrame >= 15 && animFrame < 30){
+                ObjSprite2D_SetSourceRect(objEnemy, enemySizeX + 1, 1, 2*enemySizeX, enemySizeY);
+            }
+            else if (animFrame >= 30 && animFrame < 45){
+                ObjSprite2D_SetSourceRect(objEnemy, 2*enemySizeX + 1, 1, 3*enemySizeX, enemySizeY);
+            }
+            else if (animFrame >= 45 && animFrame < 60){
+                ObjSprite2D_SetSourceRect(objEnemy, 3*enemySizeX + 1, 1, 4*enemySizeX, enemySizeY);
+            }
+            animFrame += 2;
+            if (animFrame >= 60) {animFrame = 0;}
             yield;
         }
     }

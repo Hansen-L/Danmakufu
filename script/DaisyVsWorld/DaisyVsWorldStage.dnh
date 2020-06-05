@@ -7,7 +7,7 @@
 
 #include "script/DaisyVsWorld/enemies/EnemyByShotAngle.dnh"
 #include "script/DaisyVsWorld/enemies/EnemyShootAtPlayer.dnh"
-#include "./abilities.dnh"
+#include "./abilities/flash.dnh"
 
 @Initialize
 {   
@@ -27,10 +27,10 @@
 }
 
 task TStage{
-    roundThree;
+    roundOne;
     // Check if all enemies are dead
     while(GetAllEnemyID() && GetPlayerState() != STATE_END) {yield;}
-    // Wait a bit
+    // Wait a bit  
     loop(120){yield;}
 
     roundTwo;
